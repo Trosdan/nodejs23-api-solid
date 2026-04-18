@@ -31,14 +31,13 @@ describe('Check-in Use Case', () => {
   })
 
   it('Should be able to check in', async () => {
-
     const { checkIn } = await sut.execute({
       userId: 'user-1',
       gymId: 'gym-1',
       userLatitude: 0,
       userLongitude: 0,
     })
-    
+
     expect(checkIn.id).toEqual(expect.any(String))
   })
 
@@ -78,7 +77,28 @@ describe('Check-in Use Case', () => {
       userLatitude: 0,
       userLongitude: 0,
     })
-    
+
     expect(checkIn.id).toEqual(expect.any(String))
+  })
+
+  it('Should not be able to check in on distant gym', async () => {
+    inMemoryGymsRepository.items.push({
+      id: 'gym-2',
+      title: 'JavaScript Gym',
+      description: '',
+      phone: null,
+      latitude: new Decimal(100),
+      longitude: new Decimal(100),
+    })
+
+
+    await expect(() => 
+      sut.execute({
+        userId: 'user-1',
+        gymId: 'gym-2',
+        userLatitude: 0,
+        userLongitude: 0,
+      })
+    ).rejects.toBeInstanceOf(Error)
   })
 })
