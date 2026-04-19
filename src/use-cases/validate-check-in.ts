@@ -13,14 +13,12 @@ interface ValidateCheckInUseCaseResponse {
 }
 
 export class ValidateCheckInUseCase {
-  constructor(
-    private checkInsRepository: CheckInsRepository
-  ) { }
+  constructor(private checkInsRepository: CheckInsRepository) {}
 
   async execute({
-    checkInId
+    checkInId,
   }: ValidateCheckInUseCaseRequest): Promise<ValidateCheckInUseCaseResponse> {
-    const checkIn = await this.checkInsRepository.findById(checkInId);
+    const checkIn = await this.checkInsRepository.findById(checkInId)
 
     if (!checkIn) {
       throw new ResourceNotFoundError()
@@ -28,13 +26,13 @@ export class ValidateCheckInUseCase {
 
     const distanceInMinutesFromCheckInCreation = dayjs(new Date()).diff(
       checkIn.created_at,
-      'minutes'
+      'minutes',
     )
 
-    if(distanceInMinutesFromCheckInCreation > 20) {
+    if (distanceInMinutesFromCheckInCreation > 20) {
       throw new LateCheckInValidationError()
     }
-    
+
     checkIn.validated_at = new Date()
 
     await this.checkInsRepository.save(checkIn)

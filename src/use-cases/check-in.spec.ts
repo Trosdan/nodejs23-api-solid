@@ -52,12 +52,14 @@ describe('Check-in Use Case', () => {
       userLongitude: 0,
     })
 
-    await expect(() => sut.execute({
-      userId: 'user-1',
-      gymId: 'gym-1',
-      userLatitude: 0,
-      userLongitude: 0,
-    })).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
+    await expect(() =>
+      sut.execute({
+        userId: 'user-1',
+        gymId: 'gym-1',
+        userLatitude: 0,
+        userLongitude: 0,
+      }),
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
   })
 
   it('Should be able to check in in twice but in different days', async () => {
@@ -92,14 +94,13 @@ describe('Check-in Use Case', () => {
       longitude: new Decimal(100),
     })
 
-
-    await expect(() => 
+    await expect(() =>
       sut.execute({
         userId: 'user-1',
         gymId: 'gym-2',
         userLatitude: 0,
         userLongitude: 0,
-      })
+      }),
     ).rejects.toBeInstanceOf(MaxDistanceError)
   })
 })

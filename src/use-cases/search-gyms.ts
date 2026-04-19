@@ -11,16 +11,13 @@ interface SearchGymsUserCaseResponse {
 }
 
 export class SearchGymsUseCase {
-  constructor(private gymsRepository: GymsRepository) { }
+  constructor(private gymsRepository: GymsRepository) {}
 
   async execute({
     query,
-    page
+    page,
   }: SearchGymsUseCaseRequest): Promise<SearchGymsUserCaseResponse> {
-    const gyms = await this.gymsRepository.searchMany(
-      query,
-      page
-    )
+    const gyms = await this.gymsRepository.searchMany(query, page)
 
     return { gyms }
   }

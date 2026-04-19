@@ -21,7 +21,7 @@ export class CreateGymUseCase {
     description,
     phone,
     latitude,
-    longitude
+    longitude,
   }: CreateGymUseCaseRequest): Promise<RegisterUserCaseResponse> {
     const gym = await this.gymsRepository.create({
       title,
