@@ -2,6 +2,7 @@ import { InMemoryCheckInsRepository } from '@/repositories/in-memory/in-memory-c
 import { expect, describe, it, beforeEach, vi, afterEach } from 'vitest'
 import { ValidateCheckInUseCase } from './validate-check-in'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { LateCheckInValidationError } from './errors/late-check-in-validation-error'
 
 let inMemoryCheckInsRepository: InMemoryCheckInsRepository
 let sut: ValidateCheckInUseCase
@@ -11,14 +12,14 @@ describe('Validate Check-in Use Case', () => {
     inMemoryCheckInsRepository = new InMemoryCheckInsRepository()
     sut = new ValidateCheckInUseCase(inMemoryCheckInsRepository)
 
-    // vi.useFakeTimers()
+    vi.useFakeTimers()
   })
 
   afterEach(() => {
-    // vi.useRealTimers()
+    vi.useRealTimers()
   })
 
-  it('Should be able to validate the checki-in', async () => {
+  it('Should be able to validate the check-in', async () => {
     const createdCheckIn = await inMemoryCheckInsRepository.create({
       gym_id: 'gym_01',
       user_id: 'user-01'
@@ -32,11 +33,30 @@ describe('Validate Check-in Use Case', () => {
     expect(inMemoryCheckInsRepository.items[0].validated_at).toEqual(expect.any(Date))
   })
 
-  it('Should not be able to validate an inexistent checki-in', async () => {
+  it('Should not be able to validate an inexistent check-in', async () => {
     await expect(() =>
       sut.execute({
         checkInId: 'inexistent-check-in-id'
       })
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+
+  it('should not be able to validate the check-in after 20 minutos of its creation', async () => {
+    vi.setSystemTime(new Date(2023, 0, 1, 13, 40))
+
+    const createdCheckIn = await inMemoryCheckInsRepository.create({
+      gym_id: 'gym_01',
+      user_id: 'user-01'
+    })
+
+    const twentyOneMinutosInMs = 1000 * 60 * 21
+
+    vi.advanceTimersByTime(twentyOneMinutosInMs)
+
+    expect(() =>
+      sut.execute({
+        checkInId: createdCheckIn.id
+      })
+    ).rejects.toBeInstanceOf(LateCheckInValidationError)
   })
 })
