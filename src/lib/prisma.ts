@@ -2,10 +2,11 @@ import { env } from '@/env'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../../generated/prisma'
 
-export const schema = new URL(env.DATABASE_URL).searchParams.get('schema') || 'public'
+const databaseUrl = process.env.DATABASE_URL ?? env.DATABASE_URL
+export const schema = new URL(databaseUrl).searchParams.get('schema') || 'public'
 
 const adapter = new PrismaPg({
-  connectionString: env.DATABASE_URL,
+  connectionString: databaseUrl,
 }, { schema: schema })
 
 export const prisma = new PrismaClient({
