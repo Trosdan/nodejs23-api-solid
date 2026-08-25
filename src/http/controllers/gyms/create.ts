@@ -28,7 +28,5 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
     longitude
   })
 
-  console.log({ title, latitude, longitude })
-
   return reply.status(201).send()
 }
