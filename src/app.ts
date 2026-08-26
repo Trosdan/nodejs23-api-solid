@@ -37,7 +37,7 @@ app.setErrorHandler((error, _, reply) => {
   if (env.NODE_ENV !== 'production') {
     console.error(error)
   } else {
-    // TODO: Enviar log para uma ferramenta externa (Datalog/Sentry) 
+    // TODO: Enviar log para uma ferramenta externa (Datalog/Sentry)
   }
 
   return reply.status(500).send({ message: 'Internal server error.' })
